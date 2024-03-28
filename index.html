@@ -1,0 +1,155 @@
+<!DOCTYPE html> 
+<html lang="fr" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Nono's Chips</title>
+</head>
+<style>
+    label{
+        font-size: 13px;
+    }
+    #msg{
+      display: none;
+    }
+</style>
+ 
+<body>
+    <main class="py-14">
+        <div class="max-w-screen-xl mx-auto px-4 text-gray-600 md:px-8">
+          <div class="max-w-lg mx-auto space-y-3 sm:text-center">
+            <p class="text-gray-800 text-3xl font-semibold sm:text-4xl" style="text-align: center;" >
+              Vos avis comptent pour moi
+            </p>
+            <p>
+              Merci d'y consacrer un petit bout de votre temps
+            </p>
+            <p style="font-size: 13px;">
+                <span style="color: red;">*</span> Obligatoire
+            </p>
+          </div>
+          <div class="mt-12 max-w-lg mx-auto">
+            <form class="space-y-5">
+              <div>
+                <label class="font-medium">
+                    <span style="color: red;">*</span> Quelle ont été vos expériences avec les chips de chez <cite>Nono's Chips</cite> ?
+                </label>
+                <textarea id="experience" required class="w-full mt-2 h-36 px-3 py-2 resize-none appearance-none bg-transparent outline-none border focus:border-indigo-600 shadow-sm rounded-lg"></textarea>
+              </div>
+
+              <div>
+                <label class="font-medium">
+                    <span style="color: red;">*</span> Que recommanderiez-vous à Nono's pour l'amélioration de ses produits?
+                </label>
+                <textarea id="recommandation" required class="w-full mt-2 h-36 px-3 py-2 resize-none appearance-none bg-transparent outline-none border focus:border-indigo-600 shadow-sm rounded-lg"></textarea>
+              </div>
+              <div>
+                <label class="font-medium">
+                    <span style="color: red;">*</span> Lequel de ses produits aimez-vous le plus (chips de patapes/ bananes)
+                </label>
+                <textarea id="best_product" required class="w-full mt-2 h-36 px-3 py-2 resize-none appearance-none bg-transparent outline-none border focus:border-indigo-600 shadow-sm rounded-lg"></textarea>
+              </div>
+              <div> 
+                <label class="font-medium">
+                    <span style="color: red;">*</span> Aimeriez-vous avoir d'autres produits (autre que les deux chips actuels) venant de chez Nono's? Si oui citez-les. Sinon mettez " <cite >Aucune suggestion</cite> "
+                </label>
+                <textarea id="new_product" required class="w-full mt-2 h-36 px-3 py-2 resize-none appearance-none bg-transparent outline-none border focus:border-indigo-600 shadow-sm rounded-lg"></textarea>
+              </div>
+
+              <div>
+                <label class="font-medium">
+                    <span style="color: red;">*</span> Quelle note sur 10 pouviez-vous attribuer à Nono's pour ses produits actuels?
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  max="10"
+                  required
+                  id="note"
+                  class="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border focus:border-indigo-600 shadow-sm rounded-lg"
+                />
+              </div>
+
+              <p style="font-size:12px; color:red">
+                <span>NB: Toutes vos données sont transmises sous anonymat. Merci d'être franc(che) dans vos réponses</span>  
+              </p>
+
+              <button
+                class="w-full px-4 py-2 text-white font-medium bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-600 rounded-lg duration-150"
+                id="sub"
+                onclick="save()"
+              >
+                Soumettre
+              </button>
+            </form>
+        </div>
+
+        <div id="msg" class="mt-12 mx-4 px-4 rounded-md border-l-4 border-green-500 bg-green-50 md:max-w-2xl md:mx-auto">
+          <div class="flex justify-between py-3">
+            <div class="flex">
+              <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 rounded-full text-green-500" viewBox="0 0 20 20"
+                  fill="currentColor">
+                  <path fillRule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                    clipRule="evenodd" />
+                </svg>
+              </div>
+              <div class="self-center ml-3">
+                <span class="text-green-600 font-semibold">
+                  Données envoyées avec succès
+                </span>
+                <p class="text-green-600 mt-1">
+                  Merci de nous avoir laissé vos avis
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+    </main>
+
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
+      import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-database.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyDbRMrzb3pk33PN75It1mkM1Q8VEBqFVXo",
+        authDomain: "nono-b33d5.firebaseapp.com",
+        projectId: "nono-b33d5",
+        storageBucket: "nono-b33d5.appspot.com",
+        messagingSenderId: "346086690665",
+        appId: "1:346086690665:web:13bc8729b6a63a58c7b7f8"
+      };
+
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+      const db = getDatabase(app);
+
+      document.getElementById('sub').addEventListener('click', (e) => {
+          e.preventDefault()
+          const uniqueId =
+            Math.random().toString(36).substring(2) + new Date().getTime().toString(36);
+          set(ref(db, "sondages/" + uniqueId), {
+            experience: document.getElementById("experience").value,
+            recommandation: document.getElementById("recommandation").value,
+            best_product: document.getElementById("recommandation").value,
+            new_product: document.getElementById("new_product").value,
+            note: document.getElementById("note").value
+          })
+          document.getElementById('msg').style.display="block"
+          document.getElementById("recommandation").value = ""
+          document.getElementById("experience").value = ""
+          document.getElementById("recommandation").value = ""
+          document.getElementById("new_product").value = ""
+          document.getElementById("note").value = ""
+        })
+    </script>
+    
+</body>
+ 
+</html>
+                
+
+            

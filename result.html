@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <title>sondage-resultats</title>
+</head>
+<style>
+  #text{
+    text-align: center;
+    padding-top: 20px;
+  }
+  table{
+    margin-top: -10px;
+  }
+  #exp{
+    margin: auto;
+    background-color: green;
+    color: #fff;
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 20px;
+    text-align: center;
+    display: none;
+  }
+</style>
+<body>
+  <div class="max-w-screen-xl mx-auto px-4 md:px-8"
+>
+  <div class="max-w-lg">
+    <h3 class="text-gray-800 text-xl font-bold sm:text-2xl" id="text">
+      Résultat du sondage
+    </h3>
+    <p id="exp">Exporter le fichier</p>
+  </div>
+  <div class="mt-12 shadow-sm border rounded-lg overflow-x-auto">
+    <table class="w-full table-auto text-sm text-left" id="export">
+      <thead class="bg-gray-50 text-gray-600 font-medium border-b">
+        <tr>
+          <th class="py-3 px-6">N°</th>
+          <th class="py-3 px-6">Expérience</th>
+          <th class="py-3 px-6">Recommandation</th>
+          <th class="py-3 px-6">Meilleur chips</th>
+          <th class="py-3 px-6">Nouveau produit</th>
+          <th class="py-3 px-6">Note</th>
+        </tr>
+      </thead>
+      <tbody class="text-gray-600 divide-y" id="table_body">
+          
+      </tbody>
+    </table>
+  </div>
+</div>
+  <p id="test"></p>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
+    import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDbRMrzb3pk33PN75It1mkM1Q8VEBqFVXo",
+      authDomain: "nono-b33d5.firebaseapp.com",
+      projectId: "nono-b33d5",
+      storageBucket: "nono-b33d5.appspot.com",
+      messagingSenderId: "346086690665",
+      appId: "1:346086690665:web:13bc8729b6a63a58c7b7f8"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    function getAllRecords() {
+        const recordsRef = ref(db, "sondages");
+        const table_body = document.getElementById('table_body')
+        get(recordsRef).then((snapshot) => {
+            if (snapshot.exists()) {
+                const data = snapshot.val();
+                localStorage.setItem('sondages', JSON.stringify(data));
+                const keys = Object.keys(data);
+                if(keys.length == 0){
+                  document.getElementById('exp').style.display = "none"
+                } else {
+                  document.getElementById('exp').style.display = "block"
+
+                keys.forEach((key, idx) => {
+                    const sondage = data[key];
+                    const sondageElement = document.createElement('tr');
+                    sondageElement.innerHTML = `
+                      <td class="px-6 py-4 whitespace-nowrap">${idx+1} </td>
+                      <td class="px-6 py-4 whitespace-nowrap">${sondage.experience} </td>
+                      <td class="px-6 py-4 whitespace-nowrap">${sondage.recommandation}</td>
+                      <td class="px-6 py-4 whitespace-nowrap">${sondage.best_product}</td>
+                      <td class="px-6 py-4 whitespace-nowrap">${sondage.new_product}</td>
+                      <td class="px-6 py-4 whitespace-nowrap">${sondage.note}/10</td>
+                  `;
+                table_body.appendChild(sondageElement);
+              });
+            } }else {
+                console.log("No data available");
+            }
+        }).catch((error) => {
+            console.error("Error getting data:", error);
+        });
+    }
+    getAllRecords()
+
+  function exportTableToExcel(tableID, filename = ''){
+    const downloadLink = document.createElement('a');
+    const dataType = 'application/vnd.ms-excel';
+    const tableSelect = document.getElementById(tableID);
+    const tableHTML = tableSelect.outerHTML.replace(/ /g, '%20');
+
+    filename = filename ? filename + '.xls' : 'sondage.xls';
+
+    downloadLink.href = 'data:' + dataType + ', ' + tableHTML;
+    downloadLink.download = filename;
+    downloadLink.click();
+  }
+  document.getElementById('exp').addEventListener('click', (e) => {
+    e.preventDefault()
+    exportTableToExcel("export")
+  })
+  </script>
+</body>
+</html>
