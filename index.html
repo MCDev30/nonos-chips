@@ -131,19 +131,25 @@
           e.preventDefault()
           const uniqueId =
             Math.random().toString(36).substring(2) + new Date().getTime().toString(36);
+
+          const experience = document.getElementById("experience").value;
+          const recommandation = document.getElementById("recommandation").value;
+          const best_product = document.getElementById("best_product").value;
+          const new_product = document.getElementById("new_product").value;
+          const note = document.getElementById("note").value;
+
+          if (experience.trim() === '' || recommandation.trim() === '' || best_product.trim() === '' || new_product.trim() === '' || note.trim() === '') {
+            alert('Veuillez remplir tous les champs');
+            return;
+          }
           set(ref(db, "sondages/" + uniqueId), {
-            experience: document.getElementById("experience").value,
-            recommandation: document.getElementById("recommandation").value,
-            best_product: document.getElementById("recommandation").value,
-            new_product: document.getElementById("new_product").value,
-            note: document.getElementById("note").value
+            experience: experience,
+            recommandation: recommandation,
+            best_product: best_product,
+            new_product: new_product,
+            note: note
           })
-          document.getElementById('msg').style.display="block"
-          document.getElementById("recommandation").value = ""
-          document.getElementById("experience").value = ""
-          document.getElementById("recommandation").value = ""
-          document.getElementById("new_product").value = ""
-          document.getElementById("note").value = ""
+          alert('Merci pour votre soumission')
         })
     </script>
     
